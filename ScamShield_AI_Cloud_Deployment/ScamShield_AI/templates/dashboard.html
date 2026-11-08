@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block title %}Dashboard | ScamShield AI{% endblock %}
+{% macro bars(days) %}{% set top = (days|map(attribute='count')|max) or 1 %}
+<div class="bars">{% for d in days %}<div class="bar"><div class="fill" style="height: {{ (d.count / top * 100)|round }}%"></div><b>{{ d.count }}</b><span>{{ d.date }}</span></div>{% endfor %}</div>{% endmacro %}
+{% block content %}
+<h2>Your activity</h2>
+<div class="cards">
+  <div class="card"><span>Your saved scans</span><strong>{{ mine.total_scans }}</strong></div>
+  <div class="card"><span>High risk</span><strong class="hi">{{ mine.by_level.High }}</strong></div>
+  <div class="card"><span>Medium risk</span><strong class="mid">{{ mine.by_level.Medium }}</strong></div>
+  <div class="card"><span>Average risk</span><strong>{{ mine.average_risk }}</strong></div>
+</div>
+<section class="panel"><h3>Your scans · last 7 days</h3>{{ bars(mine.last_7_days) }}</section>
+<h2 class="gap">Community</h2>
+<div class="cards">
+  <div class="card"><span>All scans</span><strong>{{ community.total_scans }}</strong></div>
+  <div class="card"><span>Blocked domains</span><strong>{{ community.blocked_domains }}</strong></div>
+  <div class="card"><span>Confirmed reports</span><strong>{{ community.reports.confirmed }}</strong></div>
+  <div class="card"><span>Users</span><strong>{{ community.users }}</strong></div>
+</div>
+<section class="panel"><h3>All scans · last 7 days</h3>{{ bars(community.last_7_days) }}</section>
+{% endblock %}

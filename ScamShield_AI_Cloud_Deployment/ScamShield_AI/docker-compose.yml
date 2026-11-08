@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: scamshield
+      POSTGRES_PASSWORD: scamshield_pw
+      POSTGRES_DB: scamshield
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scamshield"]
+      interval: 5s
+      retries: 10
+  web:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgresql://scamshield:scamshield_pw@db:5432/scamshield
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ChangeMe123!}
+    depends_on:
+      db: {condition: service_healthy}
+volumes:
+  pgdata:

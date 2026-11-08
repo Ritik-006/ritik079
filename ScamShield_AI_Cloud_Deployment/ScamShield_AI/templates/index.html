@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="eyebrow">CLASSICAL ML + EXPERIMENTAL QUANTUM</div>
+  <h1>Check before you click.</h1>
+  <p>Screen suspicious messages, emails, and URLs for common scam signals. Anonymous checks are not linked to you and their text is never stored.</p>
+</section>
+<section class="panel">
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="message">Paste a message, email text, or URL</label>
+    <textarea id="message" name="message" maxlength="10000" placeholder="Example: Your account will be blocked. Verify your password immediately..." required>{{ text }}</textarea>
+    <div class="form-footer">
+      {% if current_user.is_authenticated %}
+        <label class="check"><input type="checkbox" name="save" {% if request.method == 'GET' or request.form.get('save') %}checked{% endif %}> Save to my history</label>
+      {% else %}
+        <span>Do not paste real passwords, OTPs, or private information. <a href="{{ url_for('auth.register') }}">Create an account</a> to keep a history.</span>
+      {% endif %}
+      <button type="submit">Analyze message <span aria-hidden="true">→</span></button>
+    </div>
+  </form>
+</section>
+{% if result %}
+  {% include "_result.html" %}
+  {% if scan and scan.user_id %}
+  <div class="actions">
+    <form method="post" action="{{ url_for('web.scan_feedback', scan_id=scan.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <span class="muted">Was this right? </span>
+      <button class="ghost" name="verdict" value="scam">It's a scam</button>
+      <button class="ghost" name="verdict" value="safe">It's safe</button></form>
+    <a class="ghost-link" href="{{ url_for('web.report', scan_id=scan.id) }}">Report to community</a>
+  </div>
+  {% else %}
+  <div class="actions"><a class="ghost-link" href="{{ url_for('web.report') }}">Report this to the community</a></div>
+  {% endif %}
+{% endif %}
+{% endblock %}

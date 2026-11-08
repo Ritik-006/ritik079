@@ -1,0 +1,17 @@
+<section class="results" aria-live="polite">
+  <div class="result-head"><div><div class="eyebrow">SCREENING RESULT</div><h2>{{ result.label }}</h2><p>{{ result.explanation }}</p></div><div class="score"><strong>{{ result.risk }}<small>/100</small></strong><span>Risk estimate · {{ result.level }}</span></div></div>
+  <div class="meter"><div style="width: {{ result.risk }}%"></div></div>
+  {% if result.blocklist_hit %}<div class="flash error">⚠ A link in this message matches a domain reported by the community.</div>{% endif %}
+  <div class="result-grid">
+    <article class="subpanel"><h3>Signals to review</h3><ul>{% for signal in result.signals %}<li>{{ signal }}</li>{% endfor %}</ul></article>
+    <article class="subpanel"><h3>Detected links</h3>
+      {% if result.urls %}{% for item in result.urls %}<div class="url-item"><strong>{{ item.host or item.url }}</strong><p>{{ item.url }}</p>
+        {% if item.notes %}<ul>{% for note in item.notes %}<li>{{ note }}</li>{% endfor %}</ul>{% else %}<p>No simple URL warning rule matched. This does not prove the link is safe.</p>{% endif %}</div>{% endfor %}
+      {% else %}<p>No URL detected in the submitted text.</p>{% endif %}</article>
+    <article class="subpanel"><h3>Safety recommendations</h3><ul>{% for item in result.advice %}<li>{{ item }}</li>{% endfor %}</ul></article>
+    <article class="subpanel"><h3>Model diagnostics</h3>
+      <p>Classical ML probability: <strong>{{ result.models.classical_probability }}</strong></p>
+      {% if result.models.quantum_probability is not none %}<p>Experimental quantum probability: <strong>{{ result.models.quantum_probability }}</strong></p>{% else %}<p>Experimental quantum probability: unavailable</p>{% endif %}
+      <p class="muted">{{ result.models.quantum_note }}</p></article>
+  </div>
+</section>

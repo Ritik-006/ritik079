@@ -1,0 +1,26 @@
+SCAMSHIELD AI — WINDOWS QUICK START
+
+1. Extract this whole folder from the ZIP to a normal folder, for example:
+   C:\Users\YourName\Documents\ScamShield_AI
+
+2. Make sure Python 3.11 or newer is installed. The Python Launcher command
+   `py -3 --version` should work.
+
+3. Double-click SETUP_ONCE.bat one time.
+   It creates a private .venv folder and installs the packages.
+   Internet is needed for this first installation.
+
+4. When setup says it completed successfully, double-click
+   CREATE_DESKTOP_SHORTCUT.bat once if you want a desktop icon.
+
+5. Every later time, double-click START_SCAMSHIELD.bat or the desktop shortcut.
+   Your browser opens http://127.0.0.1:5000.
+   Keep the black server window open while using ScamShield AI.
+   Close that window to stop the local app.
+
+Your SQLite database is stored in instance\scamshield.db. Keep the project
+folder in the same place so your database and saved scans remain available.
+
+This package is a desktop launcher for the included local Flask application,
+not a compiled standalone EXE. It avoids manual terminal commands and uses
+the Python environment bundled in the project folder.

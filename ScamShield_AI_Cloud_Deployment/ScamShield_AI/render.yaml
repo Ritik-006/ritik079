@@ -1,0 +1,41 @@
+# Render Blueprint for ScamShield AI.
+# The web service is public; the admin area remains protected by Flask login
+# and the is_admin role. Render will prompt for ADMIN_EMAIL and ADMIN_PASSWORD.
+services:
+  - type: web
+    name: scamshield-ai
+    runtime: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: scamshield-ai-db
+          property: connectionString
+      - key: COOKIE_SECURE
+        value: "1"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: RATE_LIMIT_PER_MIN
+        value: "30"
+      - key: ADMIN_USERNAME
+        value: owner
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: scamshield-ai-db
+    region: singapore
+    plan: basic-256mb
+    databaseName: scamshield
+    user: scamshield

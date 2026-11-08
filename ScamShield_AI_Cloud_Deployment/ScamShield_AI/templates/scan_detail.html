@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Scan #{{ scan.id }} | ScamShield AI{% endblock %}
+{% block content %}
+<section class="panel"><div class="row"><h2>Scan #{{ scan.id }}</h2><span class="muted">{{ scan.created_at.strftime('%Y-%m-%d %H:%M') }} UTC · via {{ scan.source }}</span></div>
+  <label>Analyzed text</label><pre class="quote">{{ scan.text }}</pre></section>
+{% include "_result.html" %}
+<div class="actions">
+  <form method="post" action="{{ url_for('web.scan_feedback', scan_id=scan.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <span class="muted">Your verdict: <strong>{{ scan.verdict or 'not set' }}</strong> </span>
+    <button class="ghost" name="verdict" value="scam">It's a scam</button><button class="ghost" name="verdict" value="safe">It's safe</button></form>
+  <a class="ghost-link" href="{{ url_for('web.report', scan_id=scan.id) }}">Report to community</a>
+  <form method="post" action="{{ url_for('web.scan_delete', scan_id=scan.id) }}" onsubmit="return confirm('Delete this scan permanently?')"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger">Delete scan</button></form>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block title %}Report a scam | ScamShield AI{% endblock %}
+{% block content %}
+<section class="panel narrow"><h2>Report a scam</h2>
+<p class="muted">Reports are reviewed by moderators. Confirmed links are added to the blocklist and warn other users.</p>
+<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  {% if scan_id %}<input type="hidden" name="scan_id" value="{{ scan_id }}">{% endif %}
+  <label for="category">Category</label>
+  <select id="category" name="category">{% for c in categories %}<option>{{ c }}</option>{% endfor %}</select>
+  <label for="content">Scam message / link</label>
+  <textarea id="content" name="content" maxlength="5000" required placeholder="Paste the scam text or URL. Remove personal details first.">{{ prefill }}</textarea>
+  <button type="submit" class="full">Submit report</button>
+</form></section>
+{% endblock %}

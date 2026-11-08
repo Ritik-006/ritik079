@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% block title %}Admin | ScamShield AI{% endblock %}
+{% block content %}
+<h2>Admin panel</h2>
+<div class="cards">
+  <div class="card"><span>Users</span><strong>{{ stats.users }}</strong></div>
+  <div class="card"><span>Total scans</span><strong>{{ stats.total_scans }}</strong></div>
+  <div class="card"><span>Pending reports</span><strong class="mid">{{ stats.reports.pending }}</strong></div>
+  <div class="card"><span>Blocked domains</span><strong>{{ stats.blocked_domains }}</strong></div>
+</div>
+<section class="panel"><div class="row"><h3>Reports</h3>
+  <div class="filters">{% for s in ['pending','confirmed','rejected'] %}<a href="{{ url_for('admin.panel', status=s) }}" class="{{ 'on' if status == s }}">{{ s|capitalize }}</a>{% endfor %}</div></div>
+  {% for r in reports %}
+  <div class="report"><div class="row"><strong>{{ r.category }}</strong><span class="muted">#{{ r.id }} · {{ r.created_at.strftime('%Y-%m-%d %H:%M') }} · {{ r.user.username if r.user else 'anonymous' }}</span></div>
+    <pre class="quote">{{ r.content }}</pre>
+    {% if r.status == 'pending' %}<div class="actions">
+      <form method="post" action="{{ url_for('admin.moderate', report_id=r.id, action='confirm') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Confirm &amp; block links</button></form>
+      <form method="post" action="{{ url_for('admin.moderate', report_id=r.id, action='reject') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ghost">Reject</button></form></div>{% endif %}</div>
+  {% else %}<p class="muted">No {{ status }} reports.</p>{% endfor %}
+</section>
+<section class="panel"><h3>Domain blocklist</h3>
+  <form method="post" action="{{ url_for('admin.add_domain') }}" class="inline-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input name="domain" placeholder="scam-site.example" required><input name="reason" placeholder="Reason (optional)"><button>Add domain</button></form>
+  <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Reason</th><th>Added</th><th></th></tr></thead><tbody>
+  {% for d in domains %}<tr><td>{{ d.domain }}</td><td>{{ d.reason }}</td><td>{{ d.created_at.strftime('%Y-%m-%d') }}</td>
+    <td><form method="post" action="{{ url_for('admin.remove_domain', entry_id=d.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="link">Remove</button></form></td></tr>
+  {% else %}<tr><td colspan="4" class="muted">Blocklist is empty.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+<section class="panel"><h3>Model</h3><p class="muted">Retrain the classifier using confirmed reports and users' “scam / safe” verdicts.</p>
+  <form method="post" action="{{ url_for('admin.retrain') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Retrain model</button></form></section>
+{% endblock %}

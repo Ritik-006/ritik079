@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block title %}Sign in | ScamShield AI{% endblock %}
+{% block content %}
+<section class="panel narrow"><h2>Sign in</h2>
+<form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="identity">Username or email</label><input id="identity" name="identity" required autofocus autocomplete="username">
+  <label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password">
+  <label class="check"><input type="checkbox" name="remember"> Keep me signed in</label>
+  <button type="submit" class="full">Sign in</button>
+</form>
+<p class="muted center">New here? <a href="{{ url_for('auth.register') }}">Create an account</a></p></section>
+{% endblock %}
