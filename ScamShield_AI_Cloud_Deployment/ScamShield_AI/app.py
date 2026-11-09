@@ -24,7 +24,7 @@ def create_app(overrides=None):
             problems.append("SECRET_KEY must be a generated secret of at least 32 characters")
         if not database_uri.startswith(("postgresql://", "postgresql+")):
             problems.append("DATABASE_URL must point to PostgreSQL for persistent production storage")
-        if not app.config.get("COOKIE_SECURE"):
+        if not app.config.get("SESSION_COOKIE_SECURE"):
             problems.append("COOKIE_SECURE must be 1 when deployed over HTTPS")
         if not app.config.get("ADMIN_EMAIL") or not app.config.get("ADMIN_PASSWORD"):
             problems.append("ADMIN_EMAIL and ADMIN_PASSWORD must be configured")
